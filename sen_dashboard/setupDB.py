@@ -122,5 +122,14 @@ CREATE TABLE IF NOT EXISTS NotifiedPersonsNotificationGroups (
 
     COMMIT;
 
-
 """
+
+connection = sqlite3.connect(db_name)
+cursor = connection.executescript(setup_sql_script)
+
+connection.commit()
+connection.close()
+
+if __name__ == "__main__":
+    db_name = sys.argv[1]
+    setup(db_name)
