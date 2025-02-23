@@ -4,7 +4,8 @@ import sys
 def setup(db_name):
     # Creates all the required tables for the database 
     setup_sql_script = """
-
+PRAGMA foreigh_keys = ON; -- this is required for sqlite3 to turn on foreign
+                              -- key constraints as it is off by default
 BEGIN;
 
 -- Locations Table: Stores physical locations from where sensor devices are located 
