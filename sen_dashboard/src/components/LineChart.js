@@ -26,7 +26,7 @@ export default class LineChart extends Component {
 
         const context = this.reactRef.current.getContext('2d')
 
-        var chart = new Chart(context, {
+        new Chart(context, {
 
             type: 'line',
             data: {
@@ -37,11 +37,20 @@ export default class LineChart extends Component {
                         label: 'Months',
                         data: data,
                         backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderColor: '#000000',
 
                     }
 
                 ]
+
+            },
+
+            options: {
+                //chart will adjust accordiing to the screen size 
+                responsive : true,
+                //streching or no streching 
+                maintainAspectRatio: true
+
 
             }
 
