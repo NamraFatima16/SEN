@@ -1,21 +1,12 @@
-import React from "react";
-import ChartComponent from "./components/LineChart";
-import './App.css';
-import LineChart from "./components/LineChart";
-
-
+import React from 'react';
+import Dashboard from './components/Dashboard';
 
 function App() {
   return (
-    <div className="App">
-      
-      <h1>CSV Line Chart</h1>
-      <LineChart />
- 
-
+    <div>
+      <Dashboard />
     </div>
   );
 }
 
 export default App;
-

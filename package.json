@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@mui/material": "^6.4.8",
+    "jspdf": "^3.0.1"
+  }
+}

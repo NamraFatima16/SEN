@@ -11,35 +11,27 @@ export const sensorData= [
 export default class Dashboard extends Component {
 
     constructor(props){
-
         super(props);
-
         this.state = {
-
             labels:timeIntervels,
             data:sensorData
-        }
+        };
         this.updateData = this.updateData.bind(this);
     }
 
     updateData(){
         this.setState({
-            
             labels:timeIntervels,
             data:sensorData
         })
-
     }
+
     render() {
-
         const {labels, data } = this.state;
-
         return (
             <div>
-
                 <h1>Hello World Dashboard</h1>
-                <LineChart data = {data} labels={labels}></LineChart>
-
+                <LineChart labels={labels} data={data}></LineChart>
             </div>
         )
     }

@@ -14,6 +14,7 @@ import zoomPlugin from "chartjs-plugin-zoom";
 import "chartjs-adapter-date-fns";
 import { Line } from "react-chartjs-2";
 import Papa from "papaparse";
+import DownloadMenu from "./DownloadMenu";
 
 ChartJS.register(
   CategoryScale,
@@ -44,7 +45,7 @@ const LineChart = () => {
     const fetchData = async () => {
       try {
         const response = await fetch("/test.csv"); // Fetch the CSV file from the public folder
-      
+
         const text = await response.text();
 
         const result = Papa.parse(text, {
@@ -76,7 +77,7 @@ const LineChart = () => {
     };
     fetchData();
   }, []);
-  
+
   const options = {
     responsive: true,
     plugins: {
@@ -126,29 +127,119 @@ const LineChart = () => {
       },
     },
   };
-//   const data = {
-//     labels: ["January", "February", "March", "April", "May", "June"],
-//     datasets: [
-//       {
-//         label: "Sample Data",
-//         data: [65, 59, 80, 81, 56, 55],
-//         borderColor: "rgb(255, 99, 132)",
-//         backgroundColor: "rgba(255, 99, 132, 0.5)",
-//       },
-//     ],
-//   };
-const resetChart = () => {
+
+  // Function to reset zoom
+  const resetZoom = () => {
     if (chartRef && chartRef.current) {
       chartRef.current.resetZoom(); // Call resetZoom() on the Chart.js instance
     }
   };
 
+  // funtion to download chart data as csv
+  const downloadCSV = () => {
+    const { labels, datasets } = chartData;
+
+    if (!labels.length || !datasets[0].data.length) {
+      alert("no data avalible to download.");
+      return;
+    }
+
+    let csvContent = "Timestamp,Temprature\n";
+
+    // Combining timestamp and data point
+    labels.forEach((timestamp, index) => {
+      // Fix: Use new Date() instead of new DataTransfer()
+      const date = new Date(timestamp);
+      const formattedDate = date.toISOString();
+      const value = datasets[0].data[index];
+      csvContent += `${formattedDate},${value}\n`;
+    });
+
+    //Creating a blob and download link
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", "temprature-data.csv");
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  //funtion to download PDF
+  const downloadPDF = () => {
+    if (!chartRef || !chartRef.current) {
+      alert("Chart is not available");
+      return;
+    }
+
+    // getting canvas for the chat
+    const canvas = chartRef.current.canvas;
+
+    // converting chart tio image
+    const image = canvas.toDataURL("image/png");
+
+    // Create a new jsPDF instance using dynamic import
+    import("jspdf")
+      .then((jsPDF) => {
+        const pdf = new jsPDF.default();
+
+        // Add title
+        pdf.text("Temperature Data Chart", 20, 20);
+
+        // Add the image to the PDF
+        pdf.addImage(image, "PNG", 15, 30, 180, 100);
+
+        // Save the PDF
+        pdf.save("temperature-chart.pdf");
+      })
+      .catch((error) => {
+        console.error("Error generating PDF:", error);
+        alert("Failed to generate PDF. Please make sure jspdf is installed.");
+      });
+  };
+
   return (
-    <div>
+    <div className="chart-container" style={{ position: "relative" }}>
+      <div className="chart-header" style={styles.header}>
+        <h3 style={styles.title}>Temperature Data</h3>
+        <div className="chart-controls" style={styles.controls}>
+          <button onClick={resetZoom} style={styles.resetButton}>
+            Reset Zoom
+          </button>
+          <DownloadMenu onExportCSV={downloadCSV} onExportPDF={downloadPDF} />
+        </div>
+      </div>
       <Line ref={chartRef} data={chartData} options={options} />
-      <button onClick={resetChart}>Reset Zoom</button>
     </div>
   );
+};
+// Inline styles
+const styles = {
+  header: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: "15px",
+  },
+  title: {
+    margin: 0,
+    fontSize: "18px",
+  },
+  controls: {
+    display: "flex",
+    gap: "10px",
+    alignItems: "center",
+  },
+  resetButton: {
+    padding: "8px 15px",
+    backgroundColor: "#6c757d",
+    color: "white",
+    border: "none",
+    borderRadius: "4px",
+    cursor: "pointer",
+  },
 };
 
 export default LineChart;
