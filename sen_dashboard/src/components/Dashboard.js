@@ -30,9 +30,23 @@ export default class Dashboard extends Component {
         const {labels, data } = this.state;
         return (
             <div>
-                <h1>Hello World Dashboard</h1>
+                <h1 style={styles.heading}>Hello World Dashboard</h1>
                 <LineChart labels={labels} data={data}></LineChart>
             </div>
         )
     }
 }
+// Styles for the Dashboard component
+const styles = {
+    container: {
+        padding: "20px",
+        maxWidth: "1200px",
+        margin: "0 auto"
+    },
+    heading: {
+        textAlign: "center",
+        marginBottom: "25px",
+        color: "#333",
+        fontFamily: "Arial, sans-serif" 
+    }
+};
